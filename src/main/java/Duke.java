@@ -4,6 +4,8 @@ import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
+
 public class Duke {
     public static void main(String[] args) throws Exception{
         String logo = " ____        _        \n"
@@ -17,19 +19,28 @@ public class Duke {
         out.write("Hello from\n" + logo);
         out.write("Hello! I'm Duke\n" + "What can I do for you?\n");
         out.flush();
-        String cmd = br.readLine();
-        ArrayList<String> strings = new ArrayList<>(100);
+        StringTokenizer st  = new StringTokenizer(br.readLine());
+        String cmd = st.nextToken();
+        ArrayList<Task> tasks = new ArrayList<>(100);
         while(!cmd.equals("bye")) {
             if(cmd.equals("list")){
-                for(int i = 0; i < strings.size(); i++){
-                    out.write(String.valueOf(i+1) + ". " + strings.get(i) + "\n");
+                out.write("Here are the tasks in your list:\n");
+                for(int i = 0; i < tasks.size(); i++){
+                    out.write(String.valueOf(i+1) + "." +  tasks.get(i).status
+                            + tasks.get(i).name + "\n");
                 }
+            }else if(cmd.equals("done")){
+                int idx = Integer.parseInt(st.nextToken())-1;
+                tasks.get(idx).done();
+                out.write("Nice! I've marked this task as done:\n");
+                out.write("  " + tasks.get(idx).status +  tasks.get(idx).name + "\n");
             }else {
-                strings.add(cmd);
+                tasks.add(new Task(cmd));
                 out.write("added:" + cmd + '\n');
             }
             out.flush();
-            cmd = br.readLine();
+            st = new StringTokenizer(br.readLine());
+            cmd = st.nextToken();
         }
         out.write("Bye. Hope to see you again soon!\n");
         br.close();
@@ -37,3 +48,13 @@ public class Duke {
     }
 }
 
+class Task{
+    public String status = "[" + "\u2717" +"] " ;
+    public String name;
+    public Task(String x){
+        this.name = x;
+    }
+    public void done(){
+        this.status ="[" + "\u2713" +"] " ;
+    }
+}
