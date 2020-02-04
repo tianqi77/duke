@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.format.DateTimeParseException;
 public class Duke {
     public static void main(String[] args) throws Exception {
         String logo = " ____        _        \n"
@@ -75,9 +78,13 @@ public class Duke {
                             if (endIdx == -1) {
                                 new DukeException(out, "OOPS!!! The deadline cannot be empty.");
                             } else {
-                                currTask = new Deadline(curr.substring(8, endIdx), " (by:" + curr.substring(endIdx + 4) + ")");
-                                tasks.add(currTask);
-                                currTask.addTask(out, tasks.size());
+                                try {
+                                    currTask = new Deadline(curr.substring(8, endIdx), " (by:" + curr.substring(endIdx + 4) + ")");
+                                    tasks.add(currTask);
+                                    currTask.addTask(out, tasks.size());
+                                }catch(DateTimeParseException e){
+                                    new DukeException(out, "OOPS!!! Try to type date in the format of yyyy-mm-dd.");
+                                }
                             }
                         } catch (NoSuchElementException e1) {
                             new DukeException(out, "OOPS!!! The description of a deadline cannot be empty.");
@@ -90,7 +97,7 @@ public class Duke {
                             if (endIdx == -1) {
                                 new DukeException(out, "OOPS!!! The venue cannot be empty.");
                             } else {
-                                currTask = new Deadline(curr.substring(8, endIdx), " (by:" + curr.substring(endIdx + 4) + ")");
+                                currTask = new Event(curr.substring(5, endIdx), " (at:" + curr.substring(endIdx + 4) + ")");
                                 tasks.add(currTask);
                                 currTask.addTask(out, tasks.size());
                             }
@@ -99,7 +106,7 @@ public class Duke {
                         }
                         break;
                 }
-            } catch (Exception e) {
+            } catch (IllegalArgumentException e) {
                 new DukeException(out, "OOPS!!! I'm sorry, but I don't know what that means :-(");
             }
             out.flush();
@@ -135,17 +142,23 @@ class Task{
     }
 }
 class Deadline extends Task{
-    public String ddl;
+    public LocalDate ddl;
     public Deadline (String x, String d){
         super(x);
         this.type = "[D]";
-        this.ddl = d;
+        int len = d.length();
+        this.ddl = LocalDate.parse(d.substring(6, len-1));
+    }
+    public String convert(LocalDate date){
+        int year = date.getYear();
+        int day = date.getDayOfMonth();
+        Month mon = date.getMonth();
+        return mon.toString().substring(0,3) + " " + String.valueOf(day) + " " + String.valueOf(year);
     }
     @Override
     public void print(BufferedWriter out) throws Exception{
-        out.write(this.type + this.status + this.name + this.ddl + "\n");
+        out.write(this.type + this.status + this.name + " (by: " + convert(this.ddl)+ ")\n");
     }
-
 }
 class Event extends Task{
     public String venue;
