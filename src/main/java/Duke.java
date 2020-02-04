@@ -1,12 +1,15 @@
+import java.io.FileWriter;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.BufferedWriter;
-import java.io.OutputStreamWriter;
-import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import java.nio.charset.StandardCharsets;
+
 public class Duke {
     public static void main(String[] args) throws Exception {
         String logo = " ____        _        \n"
@@ -22,10 +25,9 @@ public class Duke {
         out.flush();
         String curr = br.readLine();
         StringTokenizer st = new StringTokenizer(curr);
-        //String cmd = st.nextToken();
         ArrayList<Task> tasks = new ArrayList<>(100);
-        Task currTask = null;
-        //Command cmd = Command.valueOf(st.nextToken());
+        Task currTask;
+        load(tasks);
         while (true) {
             try {
                 Command cmd = Command.valueOf(st.nextToken());
@@ -45,6 +47,7 @@ public class Duke {
                     case done:
                         int idx = Integer.parseInt(st.nextToken()) - 1;
                         tasks.get(idx).done(out);
+                        save(tasks);
                         break;
                     case delete:
                         int index = Integer.parseInt(st.nextToken()) - 1;
@@ -56,6 +59,7 @@ public class Duke {
                         } else {
                             out.write("Now you have" + String.valueOf(numTask) + "tasks in the list.\n");
                         }
+                        save(tasks);
                         break;
                     case todo:
                         try {
@@ -64,9 +68,11 @@ public class Duke {
                             currTask = new Task(sub);
                             tasks.add(currTask);
                             currTask.addTask(out, tasks.size());
+                            //save(tasks);
                         } catch (Exception e) {
                             new DukeException(out, "OOPS!!! The description of a todo cannot be empty.");
                         }
+                        save(tasks);
                         break;
                     case deadline:
                         try {
@@ -82,6 +88,7 @@ public class Duke {
                         } catch (NoSuchElementException e1) {
                             new DukeException(out, "OOPS!!! The description of a deadline cannot be empty.");
                         }
+                        save(tasks);
                         break;
                     case event:
                         try {
@@ -90,22 +97,86 @@ public class Duke {
                             if (endIdx == -1) {
                                 new DukeException(out, "OOPS!!! The venue cannot be empty.");
                             } else {
-                                currTask = new Deadline(curr.substring(8, endIdx), " (by:" + curr.substring(endIdx + 4) + ")");
+                                currTask = new Event(curr.substring(5, endIdx), " (at:" + curr.substring(endIdx + 4) + ")");
                                 tasks.add(currTask);
                                 currTask.addTask(out, tasks.size());
                             }
                         } catch (NoSuchElementException e1) {
                             new DukeException(out, "OOPS!!! The description of an event cannot be empty.");
                         }
+                        save(tasks);
                         break;
                 }
-            } catch (Exception e) {
+            } catch (IllegalArgumentException  e) {
                 new DukeException(out, "OOPS!!! I'm sorry, but I don't know what that means :-(");
             }
             out.flush();
             curr = br.readLine();
             st = new StringTokenizer(curr);
         }
+    }
+    public static void save(ArrayList<Task> tasks) throws Exception{
+        BufferedWriter out  = new BufferedWriter(new FileWriter("..\\..\\..\\data\\duke.txt"));
+        for(int i = 0; i < tasks.size(); i++){
+            if(tasks.get(i) instanceof Deadline){
+                out.write("D | ");
+            }else if(tasks.get(i) instanceof Event){
+                out.write("E | ");
+            }else{
+                out.write("T | ");
+            }
+            if(tasks.get(i).status.equals("[" + "\u2713" + "]")){
+                out.write("1 |");
+            }else{
+                out.write("0 |");
+            }
+            out.write(tasks.get(i).name);
+            if(tasks.get(i) instanceof Deadline){
+                out.write(" |");
+                int len = ((Deadline) tasks.get(i)).ddl.length();
+                out.write(((Deadline) tasks.get(i)).ddl.substring(5, len-1));
+            }else if(tasks.get(i) instanceof Event){
+                out.write(" |");
+                int len = ((Event) tasks.get(i)).venue.length();
+                out.write(((Event) tasks.get(i)).venue.substring(5, len-1));
+            }
+            out.write("\n");
+            out.flush();
+        }
+        out.close();
+    }
+    public static void load(ArrayList<Task> tasks) throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader("..\\..\\..\\data\\duke.txt"));
+        String curr = br.readLine();
+        while(curr!=null){
+            StringTokenizer st = new StringTokenizer(curr);
+            String cmd = st.nextToken();
+            st.nextToken();
+            String status = st.nextToken();
+            if(cmd.equals("T")) {
+                Task newTask = new Task(curr.substring(7));
+                if(status.equals("1")) {
+                    newTask.status = "[" + "\u2713" + "]";
+                }
+                tasks.add(newTask);
+            }else if(cmd.equals("D")){
+                int idx = curr.substring(7).indexOf("|")+7;
+                Deadline newTask = new Deadline(curr.substring(7,idx-1), " (by:" + curr.substring(idx+1) + ")");
+                if(status.equals("1")) {
+                    newTask.status = "[" + "\u2713" + "]";
+                }
+                tasks.add(newTask);
+            }else if(cmd.equals("E")){
+                int idx = curr.substring(7).indexOf("|")+7;
+                Event newTask = new Event(curr.substring(7,idx-1), " (at:" + curr.substring(idx+1) + ")");
+                if(status.equals("1")) {
+                    newTask.status = "[" + "\u2713" + "]";
+                }
+                tasks.add(newTask);
+            }
+            curr = br.readLine();
+        }
+        br.close();
     }
 }
 
