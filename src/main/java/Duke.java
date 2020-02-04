@@ -5,7 +5,7 @@ import java.io.OutputStreamWriter;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-
+import java.nio.charset.StandardCharsets;
 public class Duke {
     public static void main(String[] args) throws Exception{
         String logo = " ____        _        \n"
@@ -15,7 +15,7 @@ public class Duke {
                 + "|____/ \\__,_|_|\\_\\___|\n";
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
-                java.io.FileDescriptor.out)));
+                java.io.FileDescriptor.out), StandardCharsets.UTF_8));
         out.write("Hello from\n" + logo);
         out.write("Hello! I'm Duke\n" + "What can I do for you?\n");
         out.flush();
@@ -77,9 +77,9 @@ class Task{
         out.write("Got it. I've added this task:\n"+"  ");
         this.print(out);
         if(number > 1) {
-            out.write("Now you have " + String.valueOf(number) + " tasks in the list\n");
+            out.write("Now you have " + String.valueOf(number) + " tasks in the list.\n");
         }else{
-            out.write("Now you have 1 task in the list\n");
+            out.write("Now you have 1 task in the list.\n");
         }
     }
 }
