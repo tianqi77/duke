@@ -48,7 +48,7 @@ public class Duke {
                     if(curr.substring(8).equals("")){
                         DukeException exp = new DukeException(out,"OOPS!!! The description of a deadline cannot be empty.");
                     }else {
-                        int endIdx = curr.indexOf(" /by");
+                        int endIdx = curr.indexOf(" /by ");
                         if (endIdx == -1) {
                             DukeException exp = new DukeException(out,"OOPS!!! The deadline cannot be empty.");
                         } else {
@@ -61,7 +61,7 @@ public class Duke {
                     if(curr.substring(5).equals("")){
                         DukeException exp = new DukeException(out,"OOPS!!! The description of an event cannot be empty.");
                     }else {
-                        int endIdx = curr.indexOf(" /at");
+                        int endIdx = curr.indexOf(" /at delete");
                         if (endIdx == -1) {
                             DukeException exp = new DukeException(out,"OOPS!!! The venue cannot be empty.");
                         } else {
@@ -70,7 +70,29 @@ public class Duke {
                             currTask.addTask(out, tasks.size());
                         }
                     }
-                }else {
+                }else if(cmd.equals("delete")) {
+                    if(curr.substring(6).equals("")){
+                        DukeException exp = new DukeException(out, "OOPS!!! The description of a delete cannot be empty.");
+                    }else {
+                        try {
+                            int idx = Integer.parseInt(st.nextToken());
+                            if(idx-1 >= tasks.size()){
+                                DukeException exp = new DukeException(out, "OOPS!!! The item doesn't exist.");
+                            }else {
+                                out.write("Noted. I've removed this task:\n");
+                                tasks.remove(idx-1).print(out);
+                                int numTask = tasks.size();
+                                if (numTask == 1) {
+                                    out.write("Now you have 1 task in the list.\n");
+                                } else {
+                                    out.write("Now you have" + String.valueOf(numTask) + "task in the list.\n");
+                                }
+                            }
+                        }catch(Exception e){
+                            DukeException exp = new DukeException(out, "OOPS!!! The description of a delete must be a number.");
+                        }
+                    }
+                } else {
                     DukeException exp = new DukeException(out, "OOPS!!! I'm sorry, but I don't know what that means :-(");
                 }
             }
