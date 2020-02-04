@@ -4,10 +4,11 @@ import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import java.nio.charset.StandardCharsets;
 public class Duke {
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
         String logo = " ____        _        \n"
                 + "|  _ \\ _   _| | _____ \n"
                 + "| | | | | | | |/ / _ \\\n"
@@ -20,90 +21,91 @@ public class Duke {
         out.write("Hello! I'm Duke\n" + "What can I do for you?\n");
         out.flush();
         String curr = br.readLine();
-        StringTokenizer st  = new StringTokenizer(curr);
-        String cmd = st.nextToken();
+        StringTokenizer st = new StringTokenizer(curr);
+        //String cmd = st.nextToken();
         ArrayList<Task> tasks = new ArrayList<>(100);
         Task currTask = null;
-        while(!cmd.equals("bye")) {
-            if(cmd.equals("list")){
-                out.write("Here are the tasks in your list:\n");
-                for(int i = 0; i < tasks.size(); i++){
-                    out.write(String.valueOf(i+1) + ".");
-                    tasks.get(i).print(out);
-                }
-            }else if(cmd.equals("done")){
-                int idx = Integer.parseInt(st.nextToken())-1;
-                tasks.get(idx).done(out);
-            }else {
-                if (cmd.equals("todo")) {
-                    String sub = curr.substring(4);
-                    if(sub.equals("")){
-                        DukeException exp = new DukeException(out,"OOPS!!! The description of a todo cannot be empty.");
-                    }else {
-                        currTask = new Task(sub);
-                        tasks.add(currTask);
-                        currTask.addTask(out, tasks.size());
-                    }
-                } else if (cmd.equals("deadline")) {
-                    if(curr.substring(8).equals("")){
-                        DukeException exp = new DukeException(out,"OOPS!!! The description of a deadline cannot be empty.");
-                    }else {
-                        int endIdx = curr.indexOf(" /by ");
-                        if (endIdx == -1) {
-                            DukeException exp = new DukeException(out,"OOPS!!! The deadline cannot be empty.");
-                        } else {
-                            currTask = new Deadline(curr.substring(8, endIdx), " (by:" + curr.substring(endIdx + 4) + ")");
-                            tasks.add(currTask);
-                            currTask.addTask(out, tasks.size());
+        //Command cmd = Command.valueOf(st.nextToken());
+        while (true) {
+            try {
+                Command cmd = Command.valueOf(st.nextToken());
+                switch (cmd) {
+                    case bye:
+                        out.write("Bye. Hope to see you again soon!\n");
+                        br.close();
+                        out.close();
+                        return;
+                    case list:
+                        out.write("Here are the tasks in your list:\n");
+                        for (int i = 0; i < tasks.size(); i++) {
+                            out.write(String.valueOf(i + 1) + ".");
+                            tasks.get(i).print(out);
                         }
-                    }
-                } else if (cmd.equals("event")) {
-                    if(curr.substring(5).equals("")){
-                        DukeException exp = new DukeException(out,"OOPS!!! The description of an event cannot be empty.");
-                    }else {
-                        int endIdx = curr.indexOf(" /at delete");
-                        if (endIdx == -1) {
-                            DukeException exp = new DukeException(out,"OOPS!!! The venue cannot be empty.");
+                        break;
+                    case done:
+                        int idx = Integer.parseInt(st.nextToken()) - 1;
+                        tasks.get(idx).done(out);
+                        break;
+                    case delete:
+                        int index = Integer.parseInt(st.nextToken()) - 1;
+                        out.write("Noted. I've removed this task:\n");
+                        tasks.remove(index).print(out);
+                        int numTask = tasks.size();
+                        if (numTask == 1) {
+                            out.write("Now you have 1 task in the list.\n");
                         } else {
-                            currTask = new Event(curr.substring(5, endIdx), " (at:" + curr.substring(endIdx + 4) + ")");
-                            tasks.add(currTask);
-                            currTask.addTask(out, tasks.size());
+                            out.write("Now you have" + String.valueOf(numTask) + "tasks in the list.\n");
                         }
-                    }
-                }else if(cmd.equals("delete")) {
-                    if(curr.substring(6).equals("")){
-                        DukeException exp = new DukeException(out, "OOPS!!! The description of a delete cannot be empty.");
-                    }else {
+                        break;
+                    case todo:
                         try {
-                            int idx = Integer.parseInt(st.nextToken());
-                            if(idx-1 >= tasks.size()){
-                                DukeException exp = new DukeException(out, "OOPS!!! The item doesn't exist.");
-                            }else {
-                                out.write("Noted. I've removed this task:\n");
-                                tasks.remove(idx-1).print(out);
-                                int numTask = tasks.size();
-                                if (numTask == 1) {
-                                    out.write("Now you have 1 task in the list.\n");
-                                } else {
-                                    out.write("Now you have" + String.valueOf(numTask) + "task in the list.\n");
-                                }
-                            }
-                        }catch(Exception e){
-                            DukeException exp = new DukeException(out, "OOPS!!! The description of a delete must be a number.");
+                            st.nextToken();
+                            String sub = curr.substring(4);
+                            currTask = new Task(sub);
+                            tasks.add(currTask);
+                            currTask.addTask(out, tasks.size());
+                        } catch (Exception e) {
+                            new DukeException(out, "OOPS!!! The description of a todo cannot be empty.");
                         }
-                    }
-                } else {
-                    DukeException exp = new DukeException(out, "OOPS!!! I'm sorry, but I don't know what that means :-(");
+                        break;
+                    case deadline:
+                        try {
+                            st.nextToken();
+                            int endIdx = curr.indexOf(" /by ");
+                            if (endIdx == -1) {
+                                new DukeException(out, "OOPS!!! The deadline cannot be empty.");
+                            } else {
+                                currTask = new Deadline(curr.substring(8, endIdx), " (by:" + curr.substring(endIdx + 4) + ")");
+                                tasks.add(currTask);
+                                currTask.addTask(out, tasks.size());
+                            }
+                        } catch (NoSuchElementException e1) {
+                            new DukeException(out, "OOPS!!! The description of a deadline cannot be empty.");
+                        }
+                        break;
+                    case event:
+                        try {
+                            st.nextToken();
+                            int endIdx = curr.indexOf(" /at ");
+                            if (endIdx == -1) {
+                                new DukeException(out, "OOPS!!! The venue cannot be empty.");
+                            } else {
+                                currTask = new Deadline(curr.substring(8, endIdx), " (by:" + curr.substring(endIdx + 4) + ")");
+                                tasks.add(currTask);
+                                currTask.addTask(out, tasks.size());
+                            }
+                        } catch (NoSuchElementException e1) {
+                            new DukeException(out, "OOPS!!! The description of an event cannot be empty.");
+                        }
+                        break;
                 }
+            } catch (Exception e) {
+                new DukeException(out, "OOPS!!! I'm sorry, but I don't know what that means :-(");
             }
             out.flush();
             curr = br.readLine();
             st = new StringTokenizer(curr);
-            cmd = st.nextToken();
         }
-        out.write("Bye. Hope to see you again soon!\n");
-        br.close();
-        out.close();
     }
 }
 
@@ -162,4 +164,13 @@ class DukeException{
         String errMsg = "\u2639"+ " " + msg+ "\n";
         out.write(errMsg);
     }
+}
+enum Command{
+    bye,
+    list,
+    done,
+    delete,
+    todo,
+    deadline,
+    event,
 }
