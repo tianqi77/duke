@@ -1,14 +1,46 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.BufferedWriter;
-import java.io.OutputStreamWriter;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import java.nio.charset.StandardCharsets;
 public class Duke {
-    public static void main(String[] args) throws Exception {
+    private Storage storage;
+    private Ui ui;
+    private TaskList tasks;
+
+    public Duke(String filePath) throws Exception{
+        ui = new Ui();
+        storage = new Storage(filePath);
+        try {
+            tasks = storage.load();
+        } catch (FileNotFoundException e) {
+            ui.showLoadingError();
+            tasks = new TaskList(new ArrayList<Task>());
+        }
+    }
+
+    public void run() throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        ui.start();
+        boolean a = true;
+        while (a) {
+            Parser ps = new Parser(br.readLine());
+            a = ps.process(ui, tasks);
+            storage.save(tasks);
+        }
+    }
+
+    public static void main(String[] args) throws Exception{
+        new Duke("..\\..\\..\\data\\duke.txt").run();
+    }
+}
+
+
+
+
+
+
+ /*   public static void main(String[] args) throws Exception {
         String logo = " ____        _        \n"
                 + "|  _ \\ _   _| | _____ \n"
                 + "| | | | | | | |/ / _ \\\n"
@@ -107,7 +139,7 @@ public class Duke {
             st = new StringTokenizer(curr);
         }
     }
-}
+}*/
 
 class Task{
     public String type = "[T]";
@@ -116,17 +148,17 @@ class Task{
     public Task(String x){
         this.name = x;
     }
-    public void print(BufferedWriter out) throws Exception{
-        out.write(this.type + this.status + this.name + "\n");
+    public void print(){
+        System.out.print(this.type + this.status + this.name + "\n");
     }
-    public void done(BufferedWriter out) throws Exception{
+    public void done(){
         this.status ="[" + "\u2713" +"]" ;
-        out.write("Nice! I've marked this task as done:\n");
-        this.print(out);
+        System.out.print("Nice! I've marked this task as done:\n");
+        this.print();
     }
     public void addTask(BufferedWriter out, int number) throws Exception {
         out.write("Got it. I've added this task:\n");
-        this.print(out);
+        this.print();
         if(number > 1) {
             out.write("Now you have " + String.valueOf(number) + " tasks in the list.\n");
         }else{
@@ -142,8 +174,8 @@ class Deadline extends Task{
         this.ddl = d;
     }
     @Override
-    public void print(BufferedWriter out) throws Exception{
-        out.write(this.type + this.status + this.name + this.ddl + "\n");
+    public void print(){
+        System.out.print(this.type + this.status + this.name + this.ddl + "\n");
     }
 
 }
@@ -155,14 +187,14 @@ class Event extends Task{
         this.venue = v;
     }
     @Override
-    public void print(BufferedWriter out) throws Exception{
-        out.write(this.type + this.status + this.name + this.venue + "\n");
+    public void print() {
+        System.out.print(this.type + this.status + this.name + this.venue + "\n");
     }
 }
 class DukeException{
-    public DukeException(BufferedWriter out, String msg) throws Exception{
+    public DukeException(String msg){
         String errMsg = "\u2639"+ " " + msg+ "\n";
-        out.write(errMsg);
+        System.out.print(errMsg);
     }
 }
 enum Command{
