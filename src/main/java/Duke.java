@@ -36,16 +36,43 @@ public class Duke {
                 tasks.get(idx).done(out);
             }else {
                 if (cmd.equals("todo")) {
-                    currTask = new Task(curr.substring(5));
+                    String sub = curr.substring(4);
+                    if(sub.equals("")){
+                        DukeException exp = new DukeException(out,"OOPS!!! The description of a todo cannot be empty.");
+                    }else {
+                        currTask = new Task(sub);
+                        tasks.add(currTask);
+                        currTask.addTask(out, tasks.size());
+                    }
                 } else if (cmd.equals("deadline")) {
-                    int endIdx = curr.indexOf(" /by");
-                    currTask = new Deadline(curr.substring(9, endIdx), " (by:" + curr.substring(endIdx + 4) + ")");
+                    if(curr.substring(8).equals("")){
+                        DukeException exp = new DukeException(out,"OOPS!!! The description of a deadline cannot be empty.");
+                    }else {
+                        int endIdx = curr.indexOf(" /by");
+                        if (endIdx == -1) {
+                            DukeException exp = new DukeException(out,"OOPS!!! The deadline cannot be empty.");
+                        } else {
+                            currTask = new Deadline(curr.substring(8, endIdx), " (by:" + curr.substring(endIdx + 4) + ")");
+                            tasks.add(currTask);
+                            currTask.addTask(out, tasks.size());
+                        }
+                    }
                 } else if (cmd.equals("event")) {
-                    int endIdx = curr.indexOf(" /at");
-                    currTask = new Event(curr.substring(6, endIdx), " (at:" + curr.substring(endIdx + 4) + ")");
+                    if(curr.substring(5).equals("")){
+                        DukeException exp = new DukeException(out,"OOPS!!! The description of an event cannot be empty.");
+                    }else {
+                        int endIdx = curr.indexOf(" /at");
+                        if (endIdx == -1) {
+                            DukeException exp = new DukeException(out,"OOPS!!! The venue cannot be empty.");
+                        } else {
+                            currTask = new Event(curr.substring(5, endIdx), " (at:" + curr.substring(endIdx + 4) + ")");
+                            tasks.add(currTask);
+                            currTask.addTask(out, tasks.size());
+                        }
+                    }
+                }else {
+                    DukeException exp = new DukeException(out, "OOPS!!! I'm sorry, but I don't know what that means :-(");
                 }
-                tasks.add(currTask);
-                currTask.addTask(out, tasks.size());
             }
             out.flush();
             curr = br.readLine();
@@ -60,7 +87,7 @@ public class Duke {
 
 class Task{
     public String type = "[T]";
-    public String status = "[" + "\u2718" +"] " ;
+    public String status = "[" + "\u2718" +"]" ;
     public String name;
     public Task(String x){
         this.name = x;
@@ -69,12 +96,12 @@ class Task{
         out.write(this.type + this.status + this.name + "\n");
     }
     public void done(BufferedWriter out) throws Exception{
-        this.status ="[" + "\u2713" +"] " ;
-        out.write("Nice! I've marked this task as done:\n" + "  ");
+        this.status ="[" + "\u2713" +"]" ;
+        out.write("Nice! I've marked this task as done:\n");
         this.print(out);
     }
     public void addTask(BufferedWriter out, int number) throws Exception {
-        out.write("Got it. I've added this task:\n"+"  ");
+        out.write("Got it. I've added this task:\n");
         this.print(out);
         if(number > 1) {
             out.write("Now you have " + String.valueOf(number) + " tasks in the list.\n");
@@ -98,7 +125,7 @@ class Deadline extends Task{
 }
 class Event extends Task{
     public String venue;
-    public Event(String x, String v){
+    public Event(String x, String v) {
         super(x);
         this.type = "[E]";
         this.venue = v;
@@ -106,5 +133,11 @@ class Event extends Task{
     @Override
     public void print(BufferedWriter out) throws Exception{
         out.write(this.type + this.status + this.name + this.venue + "\n");
+    }
+}
+class DukeException{
+    public DukeException(BufferedWriter out, String msg) throws Exception{
+        String errMsg = "\u2639"+ " " + msg+ "\n";
+        out.write(errMsg);
     }
 }
