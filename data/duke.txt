@@ -1,2 +1,2 @@
-T | 0 | abc
-D | 0 | abc | today
+T | 1 | abc
+E | 0 | 123 | lt19
