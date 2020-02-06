@@ -7,21 +7,17 @@ public class Task {
     public Task(String x){
         this.name = x;
     }
-    public void print(){
-        System.out.print(this.type + this.status + this.name + "\n");
+    public String readyToPrint(){
+        return this.type + this.status + this.name;
     }
-    public void done(){
-        this.status ="[" + "\u2713" +"]" ;
-        System.out.print("Nice! I've marked this task as done:\n");
-        this.print();
-    }
-    public void addTask(BufferedWriter out, int number) throws Exception {
-        out.write("Got it. I've added this task:\n");
-        this.print();
-        if(number > 1) {
-            out.write("Now you have " + String.valueOf(number) + " tasks in the list.\n");
-        }else{
-            out.write("Now you have 1 task in the list.\n");
+    public String readyToSave(){
+        String done = "0";
+        if(status.equals("[" + "\u2713" +"]")){
+            done = "1";
         }
+        return this.type.charAt(1) + " | " + done +" |" + this.name;
+    }
+    public void print(){
+        System.out.print(readyToPrint() + "\n");
     }
 }

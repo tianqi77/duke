@@ -6,7 +6,11 @@ public class Event extends Task{
         this.venue = v;
     }
     @Override
-    public void print() {
-        System.out.print(this.type + this.status + this.name + this.venue + "\n");
+    public String readyToPrint() {
+        return super.readyToPrint() + this.venue;
+    }
+    @Override
+    public String readyToSave(){
+        return super.readyToSave() + " |" + this.venue.substring(5,this.venue.length()-1);
     }
 }

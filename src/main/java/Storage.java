@@ -20,26 +20,11 @@ public class Storage {
         out  = new BufferedWriter(new FileWriter(location));
         for(int i = 0; i < tasks.list.size(); i++){
             if(tasks.list.get(i) instanceof Deadline){
-                out.write("D | ");
+                out.write(((Deadline) tasks.list.get(i)).readyToSave());
             }else if(tasks.list.get(i) instanceof Event){
-                out.write("E | ");
+                out.write(((Event) tasks.list.get(i)).readyToSave());
             }else{
-                out.write("T | ");
-            }
-            if(tasks.list.get(i).status.equals("[" + "\u2713" + "]")){
-                out.write("1 |");
-            }else{
-                out.write("0 |");
-            }
-            out.write(tasks.list.get(i).name);
-            if(tasks.list.get(i) instanceof Deadline){
-                out.write(" |");
-                int len = ((Deadline) tasks.list.get(i)).ddl.length();
-                out.write(((Deadline) tasks.list.get(i)).ddl.substring(5, len-1));
-            }else if(tasks.list.get(i) instanceof Event){
-                out.write(" |");
-                int len = ((Event) tasks.list.get(i)).venue.length();
-                out.write(((Event) tasks.list.get(i)).venue.substring(5, len-1));
+                out.write(tasks.list.get(i).readyToSave());
             }
             out.write("\n");
             out.flush();

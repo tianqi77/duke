@@ -6,7 +6,11 @@ public class Deadline extends Task {
         this.ddl = d;
     }
     @Override
-    public void print(){
-        System.out.print(this.type + this.status + this.name + this.ddl + "\n");
+    public String readyToPrint(){
+        return super.readyToPrint() + this.ddl;
+    }
+    @Override
+    public String readyToSave(){
+        return super.readyToSave() + " |" + this.ddl.substring(5,this.ddl.length()-1);
     }
 }
