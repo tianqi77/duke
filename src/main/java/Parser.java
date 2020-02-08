@@ -46,7 +46,7 @@ public class Parser {
                 ui.printLine();
                 ui.list();
                 tasks.print(out);
-                System.out.println();
+                out.write("\n");
                 ui.printLine();
                 return true;
             case done:
@@ -122,6 +122,16 @@ public class Parser {
                     ui.exp("OOPS!!! The description of an event cannot be empty.");
                 }
                 return true;
+            case find:
+                try{
+                    String keyword = st.nextToken();
+                    ui.search();
+                    tasks.find(keyword, out);
+                    out.write("\n");
+                    ui.printLine();
+                } catch (NoSuchElementException e1){
+                    ui.exp("OOPS!!! The description of find cannot be empty.");
+                }
             default:
                 return true;
             }

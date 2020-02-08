@@ -119,6 +119,11 @@ public class Ui {
         out.flush();
     }
 
+    public void search() throws IOException {
+        printLine();
+        out.write("Here are the matching tasks in your list:\n");
+    }
+
     /**
      * Prints the error message.
      *

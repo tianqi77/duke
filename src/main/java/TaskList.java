@@ -44,9 +44,22 @@ public class TaskList {
      */
     public void print(BufferedWriter out) throws IOException {
         for (int i = 0; i < list.size(); i++) {
-            System.out.print(i + 1 + ".");
+            out.write(String.valueOf(i + 1) + ".");
             list.get(i).print(out);
             out.flush();
         }
+    }
+
+    public int find(String keyword, BufferedWriter out) throws IOException {
+        int number = 0;
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).name.contains(keyword)) {
+                number++;
+                out.write(String.valueOf(i) + ".");
+                list.get(i).print(out);
+                out.flush();
+            }
+        }
+        return number;
     }
 }

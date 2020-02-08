@@ -9,5 +9,5 @@ public enum Command {
         todo,
         deadline,
         event,
-
+        find,
 }
