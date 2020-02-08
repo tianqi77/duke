@@ -1,3 +1,6 @@
-T | 1 | abc
-T | 0 | 123 | lt19
-T | 1 | assignment | friday
+E | 1 | 123 | lt19
+D | 1 | assignment | friday
+T | 1 | abcd
+D | 0 | A | today
+E | 0 | www | xxx
+E | 0 | 111 | 222

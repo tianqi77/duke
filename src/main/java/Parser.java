@@ -1,23 +1,39 @@
-
 import java.io.BufferedWriter;
-import java.io.OutputStreamWriter;
-import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
-import java.nio.charset.StandardCharsets;
 
-public class Parser{
+/**
+ * Interpret the commands given by user and act accordingly
+ */
+public class Parser {
     public Command cmd;
     public String curr;
     public StringTokenizer st;
-    public Parser(String s){
-        curr = s;
+    public BufferedWriter out;
+
+    /**
+     * Constructor of an instance of Parser, convert the user command to Enum Command
+     * @param text the line of text input by user
+     */
+    public Parser(String text, BufferedWriter out) {
+        curr = text;
         st = new StringTokenizer(curr);
-        cmd = Command.valueOf(st.nextToken());
+        this.out = out;
     }
-    public boolean process(Ui ui, TaskList tasks) {
+
+    /**
+     * Edit the list of tasks according to the user command, and reflect to the user
+     * through user interface
+     * @param ui the user interface
+     * @param tasks the list of tasks
+     * @return whether the user wants to continue the program
+     * @throws IOException
+     */
+    public boolean process(Ui ui, TaskList tasks) throws IOException{
         Task newTask;
         try {
+            cmd = Command.valueOf(st.nextToken());
             switch (cmd) {
                 case bye:
                     ui.bye();
@@ -25,7 +41,7 @@ public class Parser{
                 case list:
                     ui.printLine();
                     ui.list();
-                    tasks.print();
+                    tasks.print(out);
                     System.out.println();
                     ui.printLine();
                     return true;
@@ -75,7 +91,7 @@ public class Parser{
                         st.nextToken();
                         int endIdx = curr.indexOf(" /by ");
                         if (endIdx == -1) {
-                            ui.exp("OOPS!!! The deadline cannot be empty.");
+                            ui.exp("OOPS!!! The time cannot be empty.");
                         } else {
                             newTask = new Deadline(curr.substring(8, endIdx), " (by:" + curr.substring(endIdx + 4) + ")");
                             tasks.add(newTask);
@@ -101,7 +117,7 @@ public class Parser{
                     }
                     return true;
             }
-        } catch (Exception E) {
+        } catch (IllegalArgumentException e) {
             ui.exp("OOPS!!! I'm sorry, but I don't know what that means :-(");
         }
         return true;

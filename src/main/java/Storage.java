@@ -1,38 +1,48 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.nio.file.NoSuchFileException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.File;
-import java.util.ArrayList;
+import java.io.*;
 import java.util.StringTokenizer;
+
+/**
+ * The class that links the data file and the project. It reads from and writes the file
+ * when there are changes in the tasks
+ */
 public class Storage {
     String location;
     BufferedWriter out;
     BufferedReader br;
 
-    public Storage(String filepath) throws Exception {
+    /**
+     * Constructor of Storage
+     * @param filepath location of the file that stores the tasks
+     * @throws FileNotFoundException
+     */
+    public Storage(String filepath) throws FileNotFoundException {
         location = filepath;
         br = new BufferedReader(new FileReader(filepath));
     }
 
-    public void save(TaskList tasks) throws Exception{
+    /**
+     * Writes all tasks in the list to the file specified
+     * @param tasks the TaskList that stores an ArrayList of all tasks
+     * @throws IOException
+     */
+    public void save(TaskList tasks) throws IOException{
         out  = new BufferedWriter(new FileWriter(location));
         for(int i = 0; i < tasks.list.size(); i++){
-            if(tasks.list.get(i) instanceof Deadline){
-                out.write(((Deadline) tasks.list.get(i)).readyToSave());
-            }else if(tasks.list.get(i) instanceof Event){
-                out.write(((Event) tasks.list.get(i)).readyToSave());
-            }else{
-                out.write(tasks.list.get(i).readyToSave());
-            }
+            out.write((tasks.list.get(i)).readyToSave());
             out.write("\n");
             out.flush();
         }
         out.close();
     }
-    public TaskList load() throws Exception{
-        TaskList tasks = new TaskList(new ArrayList<Task>());
+
+    /**
+     * Read previously existing tasks from the file specified and interpret the data
+     * as a list of tasks
+     * @return An instance of TaskList that stores an ArrayList of all existing tasks
+     * @throws IOException
+     */
+    public TaskList load() throws IOException{
+        TaskList tasks = new TaskList();
         String curr = br.readLine();
         while(curr!=null){
             StringTokenizer st = new StringTokenizer(curr);

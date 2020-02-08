@@ -1,38 +1,58 @@
-import java.io.*;
-import java.util.ArrayList;
-import java.util.NoSuchElementException;
-import java.util.StringTokenizer;
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+/**
+ * The main class that runs the duke project
+ */
 public class Duke {
     private Storage storage;
     private Ui ui;
     private TaskList tasks;
-
-    public Duke(String filePath) throws Exception{
-        ui = new Ui();
-        storage = new Storage(filePath);
+    private BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
+            java.io.FileDescriptor.out), StandardCharsets.UTF_8));
+    /**
+     * Constructor of an instance of Duke class. It creates instances of Ui, Storage,
+     * and TaskList for processing
+     * @param filePath location of the file that stores the tasks
+     */
+    public Duke(String filePath) {
+        ui = new Ui(out);
         try {
+            storage = new Storage(filePath);
             tasks = storage.load();
-        } catch (FileNotFoundException e) {
-            ui.showLoadingError();
-            tasks = new TaskList(new ArrayList<Task>());
+        } catch (IOException e) {
+            try {
+                ui.showLoadingError();
+            }catch (IOException e1){
+                ///
+            }
+            tasks = new TaskList();
         }
     }
 
-    public void run() throws Exception{
+    /**
+     * The driver method that runs the whole duke project
+     * @throws IOException
+     */
+    public void run() throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         ui.start();
         boolean a = true;
         while (a) {
-            Parser ps = new Parser(br.readLine());
+            Parser ps = new Parser(br.readLine(), out);
             a = ps.process(ui, tasks);
             storage.save(tasks);
         }
+        br.close();
+        out.close();
     }
 
     public static void main(String[] args) throws Exception{
-        String root = System.getProperty("user.dir");
-        //new Duke(root + "/../../../data/duke.txt").run();
-        new Duke(root + "/data/duke.txt").run();
+       // new Duke("../../../data/duke.txt").run();
+        new Duke("data/duke.txt").run();
     }
 }
