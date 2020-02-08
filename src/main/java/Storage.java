@@ -1,19 +1,27 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import java.util.StringTokenizer;
 
 /**
- * The class that links the data file and the project. It reads from and writes the file
- * when there are changes in the tasks
+ * The class that links the data file and the project.
+ * It reads from and writes the file when there are changes in the tasks.
  */
 public class Storage {
-    String location;
-    BufferedWriter out;
-    BufferedReader br;
+    private String location;
+    private BufferedReader br;
 
     /**
-     * Constructor of Storage
-     * @param filepath location of the file that stores the tasks
-     * @throws FileNotFoundException
+     * Constructor of Storage.
+     *
+     * @param filepath Location of the file that stores the tasks.
+     * @throws FileNotFoundException .
      */
     public Storage(String filepath) throws FileNotFoundException {
         location = filepath;
@@ -21,13 +29,14 @@ public class Storage {
     }
 
     /**
-     * Writes all tasks in the list to the file specified
-     * @param tasks the TaskList that stores an ArrayList of all tasks
-     * @throws IOException
+     * Writes all tasks in the list to the file specified.
+     *
+     * @param tasks The TaskList that stores an ArrayList of all tasks.
+     * @throws IOException .
      */
-    public void save(TaskList tasks) throws IOException{
-        out  = new BufferedWriter(new FileWriter(location));
-        for(int i = 0; i < tasks.list.size(); i++){
+    public void save(TaskList tasks) throws IOException {
+        BufferedWriter out = new BufferedWriter(new FileWriter(location));
+        for (int i = 0; i < tasks.list.size(); i++) {
             out.write((tasks.list.get(i)).readyToSave());
             out.write("\n");
             out.flush();
@@ -36,36 +45,37 @@ public class Storage {
     }
 
     /**
-     * Read previously existing tasks from the file specified and interpret the data
-     * as a list of tasks
-     * @return An instance of TaskList that stores an ArrayList of all existing tasks
-     * @throws IOException
+     * Read previously existing tasks from the file specified.
+     * Interpret the data as a list of tasks.
+     *
+     * @return An instance of TaskList that stores an ArrayList of all existing tasks.
+     * @throws IOException .
      */
-    public TaskList load() throws IOException{
+    public TaskList load() throws IOException {
         TaskList tasks = new TaskList();
         String curr = br.readLine();
-        while(curr!=null){
+        while (curr != null) {
             StringTokenizer st = new StringTokenizer(curr);
             String cmd = st.nextToken();
             st.nextToken();
             String status = st.nextToken();
-            if(cmd.equals("T")) {
+            if (cmd.equals("T")) {
                 Task newTask = new Task(curr.substring(7));
-                if(status.equals("1")) {
+                if (status.equals("1")) {
                     newTask.status = "[" + "\u2713" + "]";
                 }
                 tasks.list.add(newTask);
-            }else if(cmd.equals("D")){
-                int idx = curr.substring(7).indexOf("|")+7;
-                Deadline newTask = new Deadline(curr.substring(7,idx-1), " (by:" + curr.substring(idx+1) + ")");
-                if(status.equals("1")) {
+            } else if (cmd.equals("D")) {
+                int idx = curr.substring(7).indexOf("|") + 7;
+                Deadline newTask = new Deadline(curr.substring(7,idx - 1), " (by:" + curr.substring(idx + 1) + ")");
+                if (status.equals("1")) {
                     newTask.status = "[" + "\u2713" + "]";
                 }
                 tasks.list.add(newTask);
-            }else if(cmd.equals("E")){
-                int idx = curr.substring(7).indexOf("|")+7;
-                Event newTask = new Event(curr.substring(7,idx-1), " (at:" + curr.substring(idx+1) + ")");
-                if(status.equals("1")) {
+            } else if (cmd.equals("E")) {
+                int idx = curr.substring(7).indexOf("|") + 7;
+                Event newTask = new Event(curr.substring(7,idx - 1), " (at:" + curr.substring(idx + 1) + ")");
+                if (status.equals("1")) {
                     newTask.status = "[" + "\u2713" + "]";
                 }
                 tasks.list.add(newTask);

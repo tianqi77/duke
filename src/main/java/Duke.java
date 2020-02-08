@@ -1,12 +1,16 @@
-import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+
+import java.io.IOException;
+
 import java.nio.charset.StandardCharsets;
+
 /**
- * The main class that runs the duke project
+ * The main class that runs the duke project.
  */
 public class Duke {
     private Storage storage;
@@ -14,10 +18,12 @@ public class Duke {
     private TaskList tasks;
     private BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
             java.io.FileDescriptor.out), StandardCharsets.UTF_8));
+
     /**
-     * Constructor of an instance of Duke class. It creates instances of Ui, Storage,
-     * and TaskList for processing
-     * @param filePath location of the file that stores the tasks
+     * Constructor of an instance of Duke class.
+     * It creates instances of Ui, Storage, and TaskList for processing.
+     *
+     * @param filePath Location of the file that stores the tasks.
      */
     public Duke(String filePath) {
         ui = new Ui(out);
@@ -27,7 +33,7 @@ public class Duke {
         } catch (IOException e) {
             try {
                 ui.showLoadingError();
-            }catch (IOException e1){
+            } catch (IOException e1) {
                 ///
             }
             tasks = new TaskList();
@@ -35,24 +41,24 @@ public class Duke {
     }
 
     /**
-     * The driver method that runs the whole duke project
-     * @throws IOException
+     * The driver method that runs the whole duke project.
+     *
+     * @throws IOException .
      */
-    public void run() throws IOException{
+    public void run() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         ui.start();
-        boolean a = true;
-        while (a) {
+        boolean hasNext = true;
+        while (hasNext) {
             Parser ps = new Parser(br.readLine(), out);
-            a = ps.process(ui, tasks);
+            hasNext = ps.canContinue(ui, tasks);
             storage.save(tasks);
         }
         br.close();
         out.close();
     }
 
-    public static void main(String[] args) throws Exception{
-       // new Duke("../../../data/duke.txt").run();
+    public static void main(String[] args) throws Exception {
         new Duke("data/duke.txt").run();
     }
 }

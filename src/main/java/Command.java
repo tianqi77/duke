@@ -1,5 +1,5 @@
 /**
- * Stores all possible valid user commands
+ * Stores all possible valid user commands.
  */
 public enum Command {
         bye,
