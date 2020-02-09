@@ -53,6 +53,7 @@ public class TaskList {
     public int find(String keyword, BufferedWriter out) throws IOException {
         int number = 0;
         for (int i = 0; i < list.size(); i++) {
+            assert list.get(i).name != null;
             if (list.get(i).name.contains(keyword)) {
                 number++;
                 out.write(String.valueOf(i) + ".");
