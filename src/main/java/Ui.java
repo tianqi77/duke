@@ -57,15 +57,10 @@ public class Ui {
      * Prints a message to inform user that a task has been deleted, and current number
      * of remaining tasks.
      *
-     * @param task The deleted task.
-     * @param n Current number of tasks.
      * @throws IOException if an I/O error occurs.
      */
-    public void delete(Task task, int n) throws IOException {
+    public void delete() throws IOException {
         out.write("Noted. I've removed this task: \n");
-        task.print(out);
-        currTask(n);
-        out.write("\n");
         out.flush();
     }
 
@@ -83,15 +78,10 @@ public class Ui {
      * Prints a message to inform user that a task has been added, and current number
      * of remaining tasks.
      *
-     * @param task The added task.
-     * @param n Current number of tasks in the list.
      * @throws IOException if an I/O error occurs.
      */
-    public void add(Task task, int n) throws IOException {
+    public void add() throws IOException {
         out.write("Got it. I've added this task: \n");
-        task.print(out);
-        currTask(n);
-        out.write("\n");
         out.flush();
     }
 
