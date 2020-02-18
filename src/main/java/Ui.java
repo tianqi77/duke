@@ -23,24 +23,17 @@ public class Ui {
 
     /**
      * Prints a message to inform user that a task has been marked done.
-     *
-     * @param task The task that has been marked done.
      */
-    public String done(Task task) {
-        return "Nice! I've marked this task as done:\n" +
-                task.readyToPrint() + "\n\n";
+    public String done() {
+        return "Nice! I've marked this task as done:\n";
     }
 
     /**
      * Prints a message to inform user that a task has been deleted, and current number
      * of remaining tasks.
-     *
-     * @param task The deleted task.
-     * @param n Current number of tasks.
      */
-    public String delete(Task task, int n) {
-        return "Noted. I've removed this task: \n" + task.readyToPrint() + "\n" +
-                currTask(n) + "\n";
+    public String delete() {
+        return "Noted. I've removed this task: \n";
     }
 
     /**
@@ -57,9 +50,8 @@ public class Ui {
      * @param task The added task.
      * @param n Current number of tasks in the list.
      */
-    public String add(Task task, int n) {
-        return "Got it. I've added this task: \n" + task.readyToPrint() +
-                currTask(n) + "\n";
+    public String add() {
+        return "Got it. I've added this task: \n";
     }
 
     /**

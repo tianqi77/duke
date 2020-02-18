@@ -1,7 +1,7 @@
 /**
  * Handles invalid input by user and prints error message.
  */
-public class DukeException {
+public class DukeException extends Throwable {
     private String err;
     public DukeException(String error) {
         this.err = error;

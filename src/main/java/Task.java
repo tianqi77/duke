@@ -1,6 +1,3 @@
-import java.io.BufferedWriter;
-import java.io.IOException;
-
 /**
  * Stores the content, type and status of a task; The default type is "T".
  * The default status is undone.

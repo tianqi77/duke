@@ -37,7 +37,7 @@ public class Duke {
         boolean hasNext = true;
         while (hasNext) {
             Parser ps = new Parser(br.readLine());
-            hasNext = ps.canContinue(ui, tasks);
+            hasNext = ps.canContinue(ui);
             storage.save(tasks);
         }
         br.close();
@@ -47,8 +47,19 @@ public class Duke {
         new Duke().run();
     }
 
-    private String getMessage(String input) {
+    public String start() {
+        return ui.start();
+    }
 
+    private String getMessage(String input) {
+        try {
+            Parser parser = new Parser(input);
+            String reply = parser.dukeReply(ui, tasks);
+            storage.save(tasks);
+            return reply;
+        } catch (IOException e) {
+            return new DukeException("OOPS! There is an error saving the task list").errMsg();
+        }
     }
 
     /**

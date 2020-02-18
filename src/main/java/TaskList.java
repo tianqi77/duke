@@ -1,6 +1,3 @@
-import java.io.BufferedWriter;
-import java.io.IOException;
-
 import java.util.ArrayList;
 
 /**
@@ -41,8 +38,12 @@ public class TaskList {
      * Print out all existing tasks according to their order in the list.
      */
     public String print() {
-        String toPrint = null;
-        for (int i = 0; i < list.size(); i++) {
+        String toPrint;
+        if(list.size() == 0) {
+            return null;
+        }
+        toPrint = String.valueOf(1) + "." + list.get(0).readyToPrint() + "\n";
+        for (int i = 1; i < list.size(); i++) {
             toPrint += String.valueOf(i + 1) + "." + list.get(i).readyToPrint() + "\n";
         }
         return toPrint;
@@ -53,7 +54,7 @@ public class TaskList {
      *
      * @param keyword Keyword entered by user.
      */
-    public String find(String keyword, BufferedWriter out) {
+    public String find(String keyword) {
         int number = 0;
         String find = null;
         for (Task task : list) {
