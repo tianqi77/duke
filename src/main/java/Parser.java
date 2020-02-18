@@ -9,7 +9,6 @@ import java.util.Arrays;
  * Interpret the commands given by user and act accordingly.
  */
 public class Parser {
-    private Command cmd;
     private String curr;
     private StringTokenizer st;
     private BufferedWriter out;
@@ -18,6 +17,7 @@ public class Parser {
      * Constructor of an instance of Parser, convert the user command to Enum Command.
      *
      * @param text The line of text input by user.
+     * @param out Writer.
      */
     public Parser(String text, BufferedWriter out) {
         curr = text;
@@ -33,54 +33,39 @@ public class Parser {
      * @param ui    The user interface.
      * @param tasks The list of tasks.
      * @return Whether the user wants to continue the program.
-     * @throws IOException .
+     * @throws IOException If an I/O error occurs.
      */
     public boolean canContinue(Ui ui, TaskList tasks) throws IOException {
-        Task newTask;
         try {
-            cmd = Command.valueOf(st.nextToken());
+            Command cmd = Command.valueOf(st.nextToken());
             switch (cmd) {
             case bye:
-                ui.bye();
+                caseBye(ui);
                 return false;
             case list:
-                ui.printLine();
-                ui.list();
-                tasks.print(out);
-                out.write("\n");
-                ui.printLine();
-                break;
+                caseList(ui, tasks);
+                return true;
             case done:
                 caseDone(ui, tasks);
-                break;
+                return true;
             case delete:
                 caseDelete(ui, tasks);
-                break;
+                return true;
             case todo:
                 caseTodo(ui, tasks);
-                break;
+                return true;
             case deadline:
                 caseDeadline(ui, tasks);
-                break;
+                return true;
             case event:
                 caseEvent(ui, tasks);
-                break;
+                return true;
             case find:
-                try {
-                    String keyword = st.nextToken();
-                    ui.search();
-                    tasks.find(keyword, out);
-                    out.write("\n");
-                    ui.printLine();
-                } catch (NoSuchElementException e1) {
-                    ui.exp("OOPS!!! The description of find cannot be empty.");
-                }
-                break;
+                caseFind(ui, tasks);
+                return true;
             }
         } catch (IllegalArgumentException e) {
-            ui.exp("OOPS!!! I'm sorry, but I don't know what that means :-(");
-        }
-        return true;
+            caseException(ui);
     }
 
     public void caseDelete(Ui ui, TaskList tasks) throws IOException{
@@ -291,5 +276,59 @@ public class Parser {
         } catch (NoSuchElementException e) {
             ui.exp("OOPS!!! The description of an event cannot be empty.");
         }
+    }
+
+    /**
+     * Prints the closing message.
+     *
+     * @param ui User interface.
+     * @throws IOException if there is an I/O error.
+     */
+    public void caseBye(Ui ui) throws IOException {
+        ui.bye();
+    }
+
+    /**
+     * List down all existing tasks and show to the user.
+     *
+     * @param ui User interface.
+     * @param tasks Stores the list of tasks.
+     * @throws IOException if there is an I/O error.
+     */
+    public void caseList(Ui ui, TaskList tasks) throws IOException {
+        ui.printLine();
+        ui.list();
+        tasks.print(out);
+        out.write("\n");
+        ui.printLine();
+    }
+
+    /**
+     * Search for tasks that contains the keyword and inform user.
+     *
+     * @param ui User interface.
+     * @param tasks Stores the list of tasks.
+     * @throws IOException if there is an I/O error.
+     */
+    public void caseFind(Ui ui, TaskList tasks) throws IOException {
+        try {
+            String keyword = st.nextToken();
+            ui.search();
+            tasks.find(keyword, out);
+            out.write("\n");
+            ui.printLine();
+        } catch (NoSuchElementException e1) {
+            ui.exp("OOPS!!! The description of find cannot be empty.");
+        }
+    }
+
+    /**
+     * Call DukeException.
+     *
+     * @param ui User interface.
+     * @throws IOException if there is an I/O error.
+     */
+    public void caseException(Ui ui)throws IOException {
+        ui.exp("OOPS!!! I'm sorry, but I don't know what that means :-(");
     }
 }
