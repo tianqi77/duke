@@ -50,16 +50,22 @@ public class TaskList {
         }
     }
 
-    public int find(String keyword, BufferedWriter out) throws IOException {
+    /**
+     * Search the tasks that match the keyword.
+     *
+     * @param keyword Keyword entered by user.
+     * @param out Writer
+     * @throws IOException if there is an I/O error.
+     */
+    public void find(String keyword, BufferedWriter out) throws IOException {
         int number = 0;
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).name.contains(keyword)) {
+        for (Task task : list) {
+            if (task.name.contains(keyword)) {
                 number++;
-                out.write(String.valueOf(i) + ".");
-                list.get(i).print(out);
+                out.write(String.valueOf(number) + ".");
+                task.print(out);
                 out.flush();
             }
         }
-        return number;
     }
 }
