@@ -59,6 +59,8 @@ public class Storage {
             String cmd = st.nextToken();
             st.nextToken();
             String status = st.nextToken();
+            assert (cmd.equals("T")) || (cmd.equals("D")) || (cmd.equals("E"));
+            assert curr.length() > 7;
             if (cmd.equals("T")) {
                 Task newTask = new Task(curr.substring(7));
                 if (status.equals("1")) {
@@ -72,7 +74,7 @@ public class Storage {
                     newTask.status = "[" + "\u2713" + "]";
                 }
                 tasks.list.add(newTask);
-            } else if (cmd.equals("E")) {
+            } else {
                 int idx = curr.substring(7).indexOf("|") + 7;
                 Event newTask = new Event(curr.substring(7,idx - 1), " (at:" + curr.substring(idx + 1) + ")");
                 if (status.equals("1")) {
