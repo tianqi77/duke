@@ -41,12 +41,4 @@ public class Task {
         return this.type.charAt(1) + " | " + done + " |" + this.name;
     }
 
-    /**
-     * Print out the task.
-     *
-     * @throws IOException .
-     */
-    public void print(BufferedWriter out) throws IOException {
-        out.write(readyToPrint() + "\n");
-    }
 }
