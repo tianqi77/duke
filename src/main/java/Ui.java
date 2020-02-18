@@ -1,5 +1,4 @@
 import java.io.IOException;
-import java.io.BufferedWriter;
 
 /**
  * Handles the User Interface; Print out the actions taken following each user command.
@@ -10,47 +9,26 @@ public class Ui {
             + "| | | | | | | |/ / _ \\\n"
             + "| |_| | |_| |   <  __/\n"
             + "|____/ \\__,_|_|\\_\\___|\n";
-    private String line = "_____________________________________________________\n";
-    private BufferedWriter out;
-
-    public Ui(BufferedWriter out) {
-        this.out = out;
-    }
+    public String line = "_____________________________________________________\n";
 
     /**
      * Prints the greeting message.
      *
-     * @throws IOException if an I/O error occurs.
      */
-    public void start() throws IOException {
-        out.write("Hello from\n" + logo);
-        out.write("Hello! I'm Duke\n" + "What can I do for you?\n");
-        out.write("\n");
-        printLine();
-        out.flush();
+    public String start() {
+        return "Hello from\n" + logo  +
+                "Hello! I'm Duke\n" + "What can I do for you?\n\n" + line;
     }
 
-    /**
-     * Prints a single line of underline.
-     *
-     * @throws IOException if an I/O error occurs.
-     */
-    public void printLine() throws IOException {
-        out.write(line);
-        out.flush();
-    }
 
     /**
      * Prints a message to inform user that a task has been marked done.
-     * @param task The task that has been marked done.
      *
-     * @throws IOException if an I/O error occurs.
+     * @param task The task that has been marked done.
      */
-    public void done(Task task) throws IOException {
-        out.write("Nice! I've marked this task as done:\n");
-        task.print(out);
-        out.write("\n");
-        out.flush();
+    public String done(Task task) {
+        return "Nice! I've marked this task as done:\n" +
+                task.readyToPrint() + "\n\n";
     }
 
     /**
@@ -59,24 +37,17 @@ public class Ui {
      *
      * @param task The deleted task.
      * @param n Current number of tasks.
-     * @throws IOException if an I/O error occurs.
      */
-    public void delete(Task task, int n) throws IOException {
-        out.write("Noted. I've removed this task: \n");
-        task.print(out);
-        currTask(n);
-        out.write("\n");
-        out.flush();
+    public String delete(Task task, int n) {
+        return "Noted. I've removed this task: \n" + task.readyToPrint() + "\n" +
+                currTask(n) + "\n";
     }
 
     /**
      * Inform users that tasks in the list are to be printed.
-     *
-     * @throws IOException if an I/O error occurs.
      */
-    public void list() throws IOException {
-        out.write("Here are the tasks in your list:\n");
-        out.flush();
+    public String list() {
+        return "Here are the tasks in your list:\n";
     }
 
     /**
@@ -85,70 +56,48 @@ public class Ui {
      *
      * @param task The added task.
      * @param n Current number of tasks in the list.
-     * @throws IOException if an I/O error occurs.
      */
-    public void add(Task task, int n) throws IOException {
-        out.write("Got it. I've added this task: \n");
-        task.print(out);
-        currTask(n);
-        out.write("\n");
-        out.flush();
+    public String add(Task task, int n) {
+        return "Got it. I've added this task: \n" + task.readyToPrint() +
+                currTask(n) + "\n";
     }
 
     /**
      * Prints the closing message before the program ends.
-     *
-     * @throws IOException if an I/O error occurs.
      */
-    public void bye() throws IOException {
-        printLine();
-        out.write("Bye. Hope to see you again soon!\n");
-        out.write("\n");
-        printLine();;
-        out.flush();
+    public String bye() {
+        return line + "Bye. Hope to see you again soon!\n\n" + line;
     }
 
     /**
      * Prints the current number of tasks in the list.
      *
      * @param n Number of tasks in the list.
-     * @throws IOException if an I/O error occurs.
      */
-    public void currTask(int n) throws IOException {
-        out.write("Now you have " + n + " tasks in the list. \n");
-        out.flush();
+    public String currTask(int n) {
+        return "Now you have " + n + " tasks in the list. \n";
     }
 
     /**
      * Inform users that matched tasks are to be printed
-     *
-     * @throws IOException if an I/O error occurs.
      */
-    public void search() throws IOException {
-        printLine();
-        out.write("Here are the matching tasks in your list:\n");
+    public String search() {
+        return line + "Here are the matching tasks in your list:\n";
     }
 
     /**
      * Prints the error message.
      *
      * @param err Error message.
-     * @throws IOException if an I/O error occurs.
      */
-    public void exp(String err) throws IOException {
-        printLine();
-        new DukeException(err, out);
-        out.write("\n");
-        printLine();
-        out.flush();
+    public String exp(String err) {
+        return line + new DukeException(err).errMsg() + "\n" + line;
     }
 
     /**
      * Inform user that there is a loading error when accessing the data file.
-     *
-     * @throws IOException if an I/O error occurs.
      */
-    public void showLoadingError() throws IOException {
-        exp("Sorry, there is a loading error:(");
+    public String showLoadingError() {
+        return exp("Sorry, there is a loading error:(");
     }
 }

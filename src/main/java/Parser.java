@@ -11,17 +11,15 @@ public class Parser {
     private Command cmd;
     private String curr;
     private StringTokenizer st;
-    private BufferedWriter out;
 
     /**
      * Constructor of an instance of Parser, convert the user command to Enum Command.
      *
      * @param text The line of text input by user.
      */
-    public Parser(String text, BufferedWriter out) {
+    public Parser(String text) {
         curr = text;
         st = new StringTokenizer(curr);
-        this.out = out;
     }
 
     /**
@@ -34,7 +32,7 @@ public class Parser {
      * @return Whether the user wants to continue the program.
      * @throws IOException .
      */
-    public boolean canContinue(Ui ui, TaskList tasks) throws IOException {
+    public boolean canContinue(Ui ui, TaskList tasks) {
         Task newTask;
         try {
             cmd = Command.valueOf(st.nextToken());
@@ -50,19 +48,7 @@ public class Parser {
                 ui.printLine();
                 return true;
             case done:
-                ui.printLine();
-                try {
-                    int idx = Integer.parseInt(st.nextToken()) - 1;
-                    tasks.done(idx);
-                    ui.done(tasks.list.get(idx));
-                    ui.printLine();
-                } catch (NoSuchElementException e1) {
-                    ui.exp("Please enter a number");
-                } catch (NumberFormatException e2) {
-                    ui.exp("Please enter a valid number to be done");
-                } catch (IndexOutOfBoundsException e3) {
-                    ui.exp("Number entered is larger than size of task list");
-                }
+
                 return true;
             case delete:
                 ui.printLine();
@@ -140,4 +126,30 @@ public class Parser {
         }
         return true;
     }
+    public String caseBye(Ui ui) {
+        return ui.bye();
+    }
+    public  String caseList(Ui ui, TaskList tasks) {
+        return ui.line + ui.list() + tasks.print() + "\n" + ui.line;
+    }
+    public String caseDone(Ui ui, TaskList tasks) {
+        String message = ui.line;
+        try {
+            int idx = Integer.parseInt(st.nextToken()) - 1;
+            tasks.done(idx);
+            message += ui.done(tasks.list.get(idx));
+            message += ui.line;
+            return message;
+        } catch (NoSuchElementException e1) {
+            return ui.exp("Please enter a number");
+        } catch (NumberFormatException e2) {
+            return ui.exp("Please enter a valid number to be done");
+        } catch (IndexOutOfBoundsException e3) {
+            return ui.exp("Number entered is larger than size of task list");
+        }
+    }
+    public String caseDelete() {
+        
+    }
+
 }

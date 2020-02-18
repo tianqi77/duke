@@ -39,33 +39,29 @@ public class TaskList {
 
     /**
      * Print out all existing tasks according to their order in the list.
-     *
-     * @throws IOException .
      */
-    public void print(BufferedWriter out) throws IOException {
+    public String print() {
+        String toPrint = null;
         for (int i = 0; i < list.size(); i++) {
-            out.write(String.valueOf(i + 1) + ".");
-            list.get(i).print(out);
-            out.flush();
+            toPrint += String.valueOf(i + 1) + "." + list.get(i).readyToPrint() + "\n";
         }
+        return toPrint;
     }
 
     /**
      * Search the tasks that match the keyword.
      *
      * @param keyword Keyword entered by user.
-     * @param out Writer
-     * @throws IOException if there is an I/O error.
      */
-    public void find(String keyword, BufferedWriter out) throws IOException {
+    public String find(String keyword, BufferedWriter out) {
         int number = 0;
+        String find = null;
         for (Task task : list) {
             if (task.name.contains(keyword)) {
                 number++;
-                out.write(String.valueOf(number) + ".");
-                task.print(out);
-                out.flush();
+                find += String.valueOf(number) + "." + task.readyToPrint() + "\n";
             }
         }
+        return find;
     }
 }
