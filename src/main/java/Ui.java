@@ -46,9 +46,6 @@ public class Ui {
     /**
      * Prints a message to inform user that a task has been added, and current number
      * of remaining tasks.
-     *
-     * @param task The added task.
-     * @param n Current number of tasks in the list.
      */
     public String add() {
         return "Got it. I've added this task: \n";

@@ -1,13 +1,14 @@
 plugins {
     id 'java'
     id 'application'
-    id 'checkstyle'
+    //id 'checkstyle'
     id 'com.github.johnrengelman.shadow' version '5.1.0'
 }
 
-checkstyle {
+/*checkstyle {
     toolVersion = '8.23'
 }
+*/
 
 group 'seedu.duke'
 version '0.1.0'
@@ -17,14 +18,14 @@ repositories {
 }
 shadowJar {
     archiveBaseName = "duke"
-    archiveVersion = "v0.1"
+    archiveVersion = "v0.2"
     archiveClassifier = null
     archiveAppendix = null
 }
 
 application {
     // Change this to your main class.
-    mainClassName = "Duke"
+    mainClassName = "Launcher"
 }
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.5.0'
